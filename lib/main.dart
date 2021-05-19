@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:safemap/safemap.dart';
 import 'package:tapped/tapped.dart';
 import 'package:yapi_to_model/model/jsonPropertyInfo.dart';
 import 'package:yapi_to_model/style/color.dart';
@@ -123,22 +124,43 @@ class _MyHomePageState extends State<MyHomePage> {
             if (res == null || res is! String) {
               return;
             }
+
+            var newStr = res
+                .replaceAll('\n必须', r'#')
+                .replaceAll('\n非必须', r'#')
+                .split(RegExp(r'[\t\n]'));
+            var infoStr = <List<String>>[];
+            var count = 0;
+            var cacheList = <String>[];
+            for (var item in newStr.reversed) {
+              if (item == '#') {
+                count = 3;
+              }
+              if (count > 0) {
+                count--;
+              }
+              cacheList.add(item);
+              if (count == 0) {
+                infoStr.add(List.from(cacheList.reversed));
+                cacheList.clear();
+                count = 9999999;
+              }
+            }
             print(
-              res.replaceAll('\n非必须\n', r'').replaceAll('\t', r' '),
+              infoStr,
             );
-            res = res.replaceAll('\n非必须\n', r'');
             var l = <JsonPropertyInfo>[];
-            for (var line in res.split('\n')) {
-              var data = line.split('\t');
-              if (data.length < 3) {
-                print('放弃: $line');
+            for (var line in infoStr.reversed) {
+              var data = SafeMap(line);
+              if (data[0].string?.isEmpty != false) {
+                print('未找到key: $data');
                 continue;
               }
               l.add(
                 JsonPropertyInfo.type(
-                  data[0],
-                  JsonValueTypeBuilder.fromYapiName(data[1]),
-                  data[2],
+                  data[0].string!,
+                  JsonValueTypeBuilder.fromYapiName(data[1].string ?? 'string'),
+                  data[3].string ?? '',
                 ),
               );
             }
@@ -227,7 +249,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     StButton(
                       color: ColorPlate.mainBlue,
                       icon: Icons.copy,
-                      title: 'Copy To ClipBoard',
+                      title: 'Copy To Clipboard',
                       onTap: () async {
                         await Clipboard.setData(
                           ClipboardData(text: res),
