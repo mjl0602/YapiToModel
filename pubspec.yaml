@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   # 网络请求
-  dio: ^4.0.0
+  # dio: ^4.0.0
   # 点按
   tapped: ^2.0.0-nullsafety.0
   # Map取值

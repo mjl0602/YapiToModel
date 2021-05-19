@@ -14,7 +14,7 @@ class ModelBuilder {
       className: className.firstToUp,
       property: props.map(
         (p) {
-          return '\n  /** ${p.remark ?? p.propertyName} */ \n   ${p.propertyName} :${p.jsClassName},';
+          return '\n  /** ${p.remark ?? p.propertyName} */ \n   ${p.propertyName}?: ${p.jsClassName},';
         },
       ).join('\n  '),
     );

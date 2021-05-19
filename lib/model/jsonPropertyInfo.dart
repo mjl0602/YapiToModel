@@ -115,6 +115,12 @@ class JsonPropertyInfo {
     if (name == 'int' || name == 'double') {
       return 'number';
     }
+    if (name == 'bool') {
+      return 'boolean';
+    }
+    if (valueType == JsonValueType.list) {
+      return 'any[]';
+    }
     return name.toLowerCase();
   }
 
