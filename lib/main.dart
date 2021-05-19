@@ -130,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 .replaceAll('\n非必须', r'#')
                 .split(RegExp(r'[\t\n]'));
             var infoStr = <List<String>>[];
-            var count = 0;
+            var count = 9999999;
             var cacheList = <String>[];
             for (var item in newStr.reversed) {
               if (item == '#') {
