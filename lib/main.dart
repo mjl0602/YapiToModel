@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:safemap/safemap.dart';
 import 'package:tapped/tapped.dart';
+import 'package:tiktok_favorite_gesture/tiktok_favorite_gesture.dart';
 import 'package:yapi_to_model/model/jsonPropertyInfo.dart';
 import 'package:yapi_to_model/style/color.dart';
 import 'package:yapi_to_model/style/size.dart';
@@ -288,181 +289,183 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
     return Scaffold(
-      body: Center(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          color: ColorPlate.white,
-          constraints: BoxConstraints(
-            maxWidth: 890,
-          ),
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(right: 10),
-                    child: FlutterLogo(size: 32),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 16,
+      body: TiktokFavoriteGesture(
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            color: ColorPlate.white,
+            constraints: BoxConstraints(
+              maxWidth: 890,
+            ),
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(right: 10),
+                      child: FlutterLogo(size: 32),
                     ),
-                    child: StText.big(
-                      {
-                            GenerateMode.dart: 'YapiToDart',
-                            GenerateMode.ts: 'YapiToTsInterface',
-                          }[mode] ??
-                          'WTF??',
-                      style: TextStyle(
-                        fontSize: SysSize.huge,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                      ),
+                      child: StText.big(
+                        {
+                              GenerateMode.dart: 'YapiToDart',
+                              GenerateMode.ts: 'YapiToTsInterface',
+                            }[mode] ??
+                            'WTF??',
+                        style: TextStyle(
+                          fontSize: SysSize.huge,
+                        ),
                       ),
                     ),
+                    Tapped(
+                      onTap: () async {
+                        var newMode = await showDialog(
+                          context: context,
+                          builder: (ctx) => SimpleDialog(
+                            title: StText.medium('Select Mode'),
+                            contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 22),
+                            children: [
+                              StButton(
+                                color: ColorPlate.mainBlue,
+                                icon: Icons.code,
+                                title: 'Dart Model',
+                                onTap: () =>
+                                    Navigator.of(ctx).pop(GenerateMode.dart),
+                              ),
+                              StButton(
+                                color: ColorPlate.mainBlue,
+                                icon: Icons.code,
+                                title: 'TS Interface',
+                                onTap: () =>
+                                    Navigator.of(ctx).pop(GenerateMode.ts),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (newMode != null) {
+                          setState(() {
+                            mode = newMode;
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                        child: Icon(
+                          Icons.settings,
+                          size: 32,
+                          color: ColorPlate.mainBlue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (isSmallScreen)
+                  Container(
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: actions,
                   ),
-                  Tapped(
-                    onTap: () async {
-                      var newMode = await showDialog(
-                        context: context,
-                        builder: (ctx) => SimpleDialog(
-                          title: StText.medium('Select Mode'),
-                          contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 22),
-                          children: [
-                            StButton(
-                              color: ColorPlate.mainBlue,
-                              icon: Icons.code,
-                              title: 'Dart Model',
-                              onTap: () =>
-                                  Navigator.of(ctx).pop(GenerateMode.dart),
+                Row(
+                  children: [
+                    StText.medium('Class Name:'),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 12),
+                          width: 220,
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
                             ),
-                            StButton(
-                              color: ColorPlate.mainBlue,
-                              icon: Icons.code,
-                              title: 'TS Interface',
-                              onTap: () =>
-                                  Navigator.of(ctx).pop(GenerateMode.ts),
+                            color: ColorPlate.lightGray,
+                          ),
+                          child: StInput.helper(
+                            helper: classNameInput,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 8,
+                            ),
+                            hintText: 'Input class name here',
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (!isSmallScreen) actions,
+                  ],
+                ),
+                Container(
+                  width: double.infinity,
+                  height: 2,
+                  color: ColorPlate.lightGray,
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                ),
+                _TableHeader(),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: list.length,
+                    padding: EdgeInsets.only(bottom: 60),
+                    itemBuilder: (ctx, index) {
+                      var data = list[index];
+                      return Container(
+                        color: index % 2 == 1
+                            ? ColorPlate.white
+                            : ColorPlate.lightGray,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 12,
+                                ),
+                                child: StText.medium(data.key),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: StText.normal(data.className),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: StText.normal(data.remark),
+                            ),
+                            // Spacer(),
+                            Expanded(
+                              flex: 1,
+                              child: Wrap(
+                                children: [
+                                  // StButton(
+                                  //   color: ColorPlate.mainBlue,
+                                  //   icon: Icons.edit,
+                                  //   onTap: () {},
+                                  // ),
+                                  StButton(
+                                    color: ColorPlate.red,
+                                    icon: Icons.delete_forever,
+                                    onTap: () {
+                                      setState(() {
+                                        list.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
                       );
-                      if (newMode != null) {
-                        setState(() {
-                          mode = newMode;
-                        });
-                      }
                     },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                      child: Icon(
-                        Icons.settings,
-                        size: 32,
-                        color: ColorPlate.mainBlue,
-                      ),
-                    ),
                   ),
-                ],
-              ),
-              if (isSmallScreen)
-                Container(
-                  padding: EdgeInsets.only(bottom: 12),
-                  child: actions,
                 ),
-              Row(
-                children: [
-                  StText.medium('Class Name:'),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 12),
-                        width: 220,
-                        decoration: ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          color: ColorPlate.lightGray,
-                        ),
-                        child: StInput.helper(
-                          helper: classNameInput,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 8,
-                          ),
-                          hintText: 'Input class name here',
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (!isSmallScreen) actions,
-                ],
-              ),
-              Container(
-                width: double.infinity,
-                height: 2,
-                color: ColorPlate.lightGray,
-                margin: EdgeInsets.symmetric(vertical: 12),
-              ),
-              _TableHeader(),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: list.length,
-                  padding: EdgeInsets.only(bottom: 60),
-                  itemBuilder: (ctx, index) {
-                    var data = list[index];
-                    return Container(
-                      color: index % 2 == 1
-                          ? ColorPlate.white
-                          : ColorPlate.lightGray,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 12,
-                              ),
-                              child: StText.medium(data.key),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: StText.normal(data.className),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: StText.normal(data.remark),
-                          ),
-                          // Spacer(),
-                          Expanded(
-                            flex: 1,
-                            child: Wrap(
-                              children: [
-                                // StButton(
-                                //   color: ColorPlate.mainBlue,
-                                //   icon: Icons.edit,
-                                //   onTap: () {},
-                                // ),
-                                StButton(
-                                  color: ColorPlate.red,
-                                  icon: Icons.delete_forever,
-                                  onTap: () {
-                                    setState(() {
-                                      list.removeAt(index);
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

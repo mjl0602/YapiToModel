@@ -4,17 +4,17 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
   "version.json": "98cb252684571f10a599714dd3b35a1d",
-"index.html": "aaf0a3225ecc8ca314e1944886e8d1fa",
-"/": "aaf0a3225ecc8ca314e1944886e8d1fa",
-"main.dart.js": "43ba163930a8c8eeb1641855a725b5c2",
+"index.html": "5b0e8560ae8913792ae9bad30613523b",
+"/": "5b0e8560ae8913792ae9bad30613523b",
+"main.dart.js": "ff9619d3613bbf83317f368c460bf837",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "manifest.json": "db418efdbb3453d11268d3ba965aa389",
 "assets/AssetManifest.json": "99914b932bd37a50b983c5e7c90ae93b",
-"assets/NOTICES": "25c0cedbbe8a8a7c3c4a00438f40952a",
+"assets/NOTICES": "178cbfd49914d7e1243c56627a20772f",
 "assets/FontManifest.json": "7b2a36307916a9721811788013e65289",
-"assets/fonts/MaterialIcons-Regular.otf": "1288c9e28052e028aba623321f7826ac"
+"assets/fonts/MaterialIcons-Regular.otf": "4e6447691c9509f7acdbf8a931a85ca1"
 };
 
 // The application shell files that are downloaded before a service worker can
@@ -32,7 +32,7 @@ self.addEventListener("install", (event) => {
   return event.waitUntil(
     caches.open(TEMP).then((cache) => {
       return cache.addAll(
-        CORE.map((value) => new Request(value + '?revision=' + RESOURCES[value], {'cache': 'reload'})));
+        CORE.map((value) => new Request(value, {'cache': 'reload'})));
     })
   );
 });
